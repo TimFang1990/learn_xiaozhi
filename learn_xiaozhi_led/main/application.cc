@@ -41,6 +41,9 @@ void Application::Start() {
         app->MainLoop();
         vTaskDelete(NULL);
     }, "main_loop", 4096 * 2, this, 4, nullptr);
+
+    esp_timer_start_periodic(clock_timer_handle_, 1000000);
+
     ESP_LOGI(TAG, "Start Init Done, Entering MainLoop() ... ");
 }
 
