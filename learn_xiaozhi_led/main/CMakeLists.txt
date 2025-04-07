@@ -1,4 +1,5 @@
 set(SOURCES "led/single_led.cc"
+            "led/gpio_led.cc"
             "system_info.cc"
             "application.cc"
             "main.cc"

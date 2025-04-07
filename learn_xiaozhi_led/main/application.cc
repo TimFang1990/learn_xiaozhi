@@ -55,6 +55,7 @@ void Application::MainLoop() {
         if(++state_count_ > 8) state_count_ = 1;
         device_state_ = DeviceState(state_count_);
         GetLed()->OnStateChanged();
+        GetGpioLed()->OnStateChanged();
         ESP_LOGI(TAG, "State change to %s (%d).", stateName(device_state_), state_count_);
         //Software delay just for test
         vTaskDelay(5000 / portTICK_PERIOD_MS);
@@ -65,6 +66,12 @@ SingleLed* Application::GetLed(){
     static SingleLed led(GPIO_NUM_48);
     return &led;
 }
+
+GpioLed * Application::GetGpioLed(){
+    static GpioLed led(GPIO_NUM_41);
+    return &led;
+}
+
 
 const char * Application::stateName(DeviceState state){
     switch(state){

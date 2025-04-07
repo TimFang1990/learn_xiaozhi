@@ -11,6 +11,7 @@
 #include <list>
 
 #include "single_led.h"
+#include "gpio_led.h"
 
 enum DeviceState {
     kDeviceStateUnknown,
@@ -53,6 +54,7 @@ private:
     void MainLoop();
 
     SingleLed* GetLed(); 
+    GpioLed * GetGpioLed();
 
     const char * stateName(DeviceState state);
 
