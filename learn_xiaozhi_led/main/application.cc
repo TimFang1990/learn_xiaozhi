@@ -3,6 +3,13 @@
 #include <esp_log.h>
 
 #define TAG "Application"
+#ifdef CONFIG_BOARD_TYPE_BREAD_COMPACT_WIFI_ESP32C6
+#define LED_WS2812_PIN GPIO_NUM_8
+#define LED_SINGLE_PIN GPIO_NUM_10
+#else
+#define LED_WS2812_PIN GPIO_NUM_48
+#define LED_SINGLE_PIN GPIO_NUM_41
+#endif
 
 Application::Application() {
     //event_group_ = xEventGroupCreate();
@@ -63,12 +70,12 @@ void Application::MainLoop() {
 }
 
 SingleLed* Application::GetLed(){
-    static SingleLed led(GPIO_NUM_48);
+    static SingleLed led(LED_WS2812_PIN);
     return &led;
 }
 
 GpioLed * Application::GetGpioLed(){
-    static GpioLed led(GPIO_NUM_41);
+    static GpioLed led(LED_SINGLE_PIN);
     return &led;
 }
 
