@@ -1,7 +1,13 @@
 A series projects to learn all components of xiaozhi about how they work
-Roadmap:
-Led
-Display
-Audio Codec
-Net Server
-Others
+- Roadmap:
+  - Led 
+    - Done  
+  - Display
+    - OLED
+      - Done
+    - LCD
+      - Circle
+      - Retangle
+  - Audio Codec
+  - Net Server
+  - Others
