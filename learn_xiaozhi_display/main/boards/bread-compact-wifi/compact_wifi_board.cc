@@ -98,12 +98,32 @@ private:
         boot_button_.OnClick([this]() {
             Application::GetInstance().ToggleChatState();;
         });
+        
+        #if defined(CONFIG_IDF_TARGET_ESP32S3)
+        //no touch_button_ is connected, reuse the volume_up_button_
         volume_up_button_.OnPressDown([this]() {
             Application::GetInstance().StartListening();
         });
         volume_up_button_.OnPressUp([this]() {
             Application::GetInstance().StopListening();
         });
+        #elif defined(CONFIG_IDF_TARGET_ESP32C6)
+        touch_button_.OnPressDown([this]() {
+            Application::GetInstance().StartListening();
+        });
+        touch_button_.OnPressUp([this]() {
+            Application::GetInstance().StopListening();
+        });
+
+        volume_up_button_.OnClick([this]() {
+            static int volume = 50;
+            volume += 10;
+            if (volume > 100) {
+                volume = 0;
+            }
+            GetDisplay()->ShowNotification(Lang::Strings::VOLUME + std::to_string(volume));
+        });
+        #endif
 
         volume_down_button_.OnClick([this]() {
             static int volume = 50;
