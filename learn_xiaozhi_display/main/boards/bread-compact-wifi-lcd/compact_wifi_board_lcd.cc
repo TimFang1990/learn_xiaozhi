@@ -1,14 +1,11 @@
-#include "wifi_board.h"
-#include "audio_codecs/no_audio_codec.h"
+#include "board.h"
 #include "display/lcd_display.h"
 #include "system_reset.h"
 #include "application.h"
 #include "button.h"
 #include "config.h"
-#include "iot/thing_manager.h"
 #include "led/single_led.h"
 
-#include <wifi_station.h>
 #include <esp_log.h>
 #include <driver/i2c_master.h>
 #include <esp_lcd_panel_vendor.h>
@@ -16,9 +13,6 @@
 #include <esp_lcd_panel_ops.h>
 #include <driver/spi_common.h>
 
-#if defined(LCD_TYPE_ILI9341_SERIAL)
-#include "esp_lcd_ili9341.h"
-#endif
 
 #if defined(LCD_TYPE_GC9A01_SERIAL)
 #include "esp_lcd_gc9a01.h"
@@ -62,10 +56,10 @@ static const gc9a01_lcd_init_cmd_t gc9107_lcd_init_cmds[] = {
 LV_FONT_DECLARE(font_puhui_16_4);
 LV_FONT_DECLARE(font_awesome_16_4);
 
-class CompactWifiBoardLCD : public WifiBoard {
+class CompactWifiBoardLCD : public Board {
 private:
- 
     Button boot_button_;
+    Button speak_button_;
     LcdDisplay* display_;
 
     void InitializeSpi() {
@@ -139,29 +133,24 @@ private:
  
     void InitializeButtons() {
         boot_button_.OnClick([this]() {
-            auto& app = Application::GetInstance();
-            if (app.GetDeviceState() == kDeviceStateStarting && !WifiStation::GetInstance().IsConnected()) {
-                ResetWifiConfiguration();
-            }
-            app.ToggleChatState();
+            Application::GetInstance().ToggleChatState();
         });
-    }
 
-    // 物联网初始化，添加对 AI 可见设备
-    void InitializeIot() {
-        auto& thing_manager = iot::ThingManager::GetInstance();
-        thing_manager.AddThing(iot::CreateThing("Speaker"));
-        thing_manager.AddThing(iot::CreateThing("Screen"));
-        thing_manager.AddThing(iot::CreateThing("Lamp"));
+        speak_button_.OnPressDown([this](){
+            Application::GetInstance().StartListening();
+        });
+        speak_button_.OnPressUp([this](){
+            Application::GetInstance().StopListening();
+        });
     }
 
 public:
     CompactWifiBoardLCD() :
-        boot_button_(BOOT_BUTTON_GPIO) {
+        boot_button_(BOOT_BUTTON_GPIO),
+        speak_button_(SPEAK_BUTTON_GPIO){
         InitializeSpi();
         InitializeLcdDisplay();
         InitializeButtons();
-        InitializeIot();
         if (DISPLAY_BACKLIGHT_PIN != GPIO_NUM_NC) {
             GetBacklight()->RestoreBrightness();
         }
@@ -171,17 +160,6 @@ public:
     virtual Led* GetLed() override {
         static SingleLed led(BUILTIN_LED_GPIO);
         return &led;
-    }
-
-    virtual AudioCodec* GetAudioCodec() override {
-#ifdef AUDIO_I2S_METHOD_SIMPLEX
-        static NoAudioCodecSimplex audio_codec(AUDIO_INPUT_SAMPLE_RATE, AUDIO_OUTPUT_SAMPLE_RATE,
-            AUDIO_I2S_SPK_GPIO_BCLK, AUDIO_I2S_SPK_GPIO_LRCK, AUDIO_I2S_SPK_GPIO_DOUT, AUDIO_I2S_MIC_GPIO_SCK, AUDIO_I2S_MIC_GPIO_WS, AUDIO_I2S_MIC_GPIO_DIN);
-#else
-        static NoAudioCodecDuplex audio_codec(AUDIO_INPUT_SAMPLE_RATE, AUDIO_OUTPUT_SAMPLE_RATE,
-            AUDIO_I2S_GPIO_BCLK, AUDIO_I2S_GPIO_WS, AUDIO_I2S_GPIO_DOUT, AUDIO_I2S_GPIO_DIN);
-#endif
-        return &audio_codec;
     }
 
     virtual Display* GetDisplay() override {
@@ -194,6 +172,14 @@ public:
             return &backlight;
         }
         return nullptr;
+    }
+
+    virtual std::string GetBoardJson(){
+        return "CompactWifiBoardLCD";
+    }
+
+    virtual std::string GetBoardType(){
+        return GetBoardJson();
     }
 };
 

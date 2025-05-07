@@ -116,7 +116,7 @@ void Application::Start() {
     // Initialize the protocol
     display->SetStatus(Lang::Strings::LOADING_PROTOCOL);
 
-    SetDeviceState(kDeviceStateIdle);
+    SetDeviceState(kDeviceStateActivating);
     esp_timer_start_periodic(clock_timer_handle_, 1000000);
 }
 
@@ -193,6 +193,7 @@ void Application::SetDeviceState(DeviceState state) {
         case kDeviceStateIdle:
             display->SetStatus(Lang::Strings::STANDBY);
             display->SetEmotion("neutral");
+            display->SetChatMessage("system", "待命中...");
             break;
         case kDeviceStateConnecting:
             display->SetStatus(Lang::Strings::CONNECTING);
@@ -202,7 +203,7 @@ void Application::SetDeviceState(DeviceState state) {
         case kDeviceStateListening:
             display->SetStatus(Lang::Strings::LISTENING);
             display->SetEmotion("loving");
-            display->SetChatMessage("Demo", "Display Demo: 聆听用户说话...");
+            display->SetChatMessage("user", "Display Demo: 聆听用户说话...");
             if (previous_state == kDeviceStateSpeaking) {
                 // FIXME: Wait for the speaker to empty the buffer
                 vTaskDelay(pdMS_TO_TICKS(120));
@@ -211,7 +212,7 @@ void Application::SetDeviceState(DeviceState state) {
         case kDeviceStateSpeaking:
             display->SetStatus(Lang::Strings::SPEAKING);
             display->SetEmotion("laughing");
-            display->SetChatMessage("Demo", "Display Demo: 正在和用户说话...");
+            display->SetChatMessage("assistant", "Display Demo: 正在和用户说话...");
             break;
         default:
             // Do nothing
