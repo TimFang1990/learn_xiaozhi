@@ -8,6 +8,8 @@ A series projects to learn all components of xiaozhi about how they work
     - LCD
       - Circle
       - Retangle
+        - Done to support ESP32S3
+        - To support ESP32C6
   - Audio Codec
   - Net Server
   - Others
