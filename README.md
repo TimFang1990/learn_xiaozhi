@@ -8,7 +8,7 @@ A series projects to learn all components of xiaozhi about how they work
     - LCD
       - Circle
         - Done to support DSP32S3
-        - To support ESP32C6
+        - Done to support ESP32C6
       - Retangle
         - Done to support ESP32S3
         - Done to support ESP32C6

@@ -36,16 +36,20 @@
 #define VOLUME_DOWN_BUTTON_GPIO GPIO_NUM_NC 
 
 #ifdef CONFIG_LCD_GC9A01_240X240
+#define DISPLAY_DC_PIN        GPIO_NUM_23
+#define DISPLAY_CS_PIN        GPIO_NUM_22
+#define DISPLAY_RST_PIN       GPIO_NUM_21 
 #define DISPLAY_BACKLIGHT_PIN GPIO_NUM_NC
 #else
+#define DISPLAY_RST_PIN       GPIO_NUM_23 
+#define DISPLAY_DC_PIN        GPIO_NUM_22
+#define DISPLAY_CS_PIN        GPIO_NUM_21
 #define DISPLAY_BACKLIGHT_PIN GPIO_NUM_20 
 #endif
 
 #define DISPLAY_MOSI_PIN      GPIO_NUM_11 
 #define DISPLAY_CLK_PIN       GPIO_NUM_10 
-#define DISPLAY_DC_PIN        GPIO_NUM_22
-#define DISPLAY_RST_PIN       GPIO_NUM_23 
-#define DISPLAY_CS_PIN        GPIO_NUM_21 
+
 #else
 #error "不支持 ESP32C6 以及 ESP32S3 以外的平台"
 #endif
