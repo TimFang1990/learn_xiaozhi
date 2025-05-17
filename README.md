@@ -12,6 +12,9 @@ A series projects to learn all components of xiaozhi about how they work
       - Retangle
         - Done to support ESP32S3
         - Done to support ESP32C6
-  - Audio Codec
+  - Audio 
+    - Audio Input & Output
+    - Wake Up Word
+    - Audio Codec
   - Net Server
   - Others

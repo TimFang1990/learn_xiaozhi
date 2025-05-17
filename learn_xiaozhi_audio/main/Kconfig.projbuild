@@ -1,0 +1,60 @@
+menu "Learn-Xiaozhi-Audio"
+
+choice
+    prompt "Language"
+    default LANGUAGE_ZH_CN
+    help
+        Select device display language.
+
+    config LANGUAGE_ZH_CN
+        bool "Chinese (Simplified)"
+endchoice
+
+choice BOARD_TYPE
+    prompt "Board Type"
+    default BOARD_TYPE_BREAD_COMPACT_WIFI
+    help
+        Select the supported board type.
+    config BOARD_TYPE_BREAD_COMPACT_WIFI
+        bool "Bread Board Supporting OLED"
+    config BOARD_TYPE_BREAD_COMPACT_WIFI_LCD
+        bool "Bread Board Supporting LCD"
+endchoice
+
+choice DISPLAY_OLED_TYPE
+    depends on BOARD_TYPE_BREAD_COMPACT_WIFI
+    prompt "OLED Type"
+    default OLED_SSD1306_128X32
+    help
+        Select OLED streen type
+    config OLED_SSD1306_128X32
+        bool "SSD1306, Resolution 128*32"
+endchoice
+
+choice DISPLAY_LCD_TYPE
+    depends on BOARD_TYPE_BREAD_COMPACT_WIFI_LCD
+    prompt "Screen Type"
+    default LCD_ST7789_240X280
+    help
+        Select the LCD screen type.
+    config LCD_ST7789_240X280
+        bool "ST7789, Resolution 240*280"
+    config LCD_GC9A01_240X240
+        bool "GC9A01, Resolution 240*240, Round Streen"
+endchoice
+
+config USE_AUDIO_PROCESSOR
+    bool "Enable Gain & Noise Suppress"
+    default y
+    depends on IDF_TARGET_ESP32S3 && SPIRAM
+    help
+        需要 ESP32 S3 与 AFE 支持
+
+
+config USE_WECHAT_MESSAGE_STYLE
+    depends on LCD_ST7789_240X280
+    bool "WeChat Message Style"
+    default n
+    help
+        Using the WeChat Message Style only when LCD_ST7789_240X280 is selected.
+endmenu
