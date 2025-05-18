@@ -14,6 +14,7 @@ A series projects to learn all components of xiaozhi about how they work
         - Done to support ESP32C6
   - Audio 
     - Audio Input & Output
+      - Done to support ESP32S3 and ESP32C6
     - Wake Up Word
     - Audio Codec
   - Net Server
