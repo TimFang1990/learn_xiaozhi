@@ -59,8 +59,13 @@ config USE_WECHAT_MESSAGE_STYLE
 
 config USE_WAKE_WORD_DETECT
     bool "启用唤醒词检测"
-    default y
-    depends on IDF_TARGET_ESP32S3 && SPIRAM
+    default n
     help
-        需要 ESP32 S3 与 AFE 支持        
+        "已支持使用Wakenet直接接口版本"       
+
+config USE_WAKENET_DIRECT_IF
+    bool "Using Wakenet interface directly"
+    default n
+    help
+        Wake words detect w/o AFE        
 endmenu

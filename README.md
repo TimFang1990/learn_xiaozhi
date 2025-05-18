@@ -17,6 +17,8 @@ A series projects to learn all components of xiaozhi about how they work
       - Done to support ESP32S3 and ESP32C6
     - Wake Up Word
       - Done to support ESP32S3 w/ afe
+      - Done to support ESP32C6 w/ wn direct interface and w/o afe 
+        - Crash when talk long in single trigger, will fix it tomorrow
     - Audio Codec
   - Net Server
   - Others

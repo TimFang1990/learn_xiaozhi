@@ -5,8 +5,14 @@
 #include <freertos/task.h>
 #include <freertos/event_groups.h>
 
+#if CONFIG_USE_WAKENET_DIRECT_IF
+#include <esp_wn_iface.h>
+#include <esp_wn_models.h>
+#include <model_path.h>
+#else
 #include <esp_afe_sr_models.h>
 #include <esp_nsn_models.h>
+#endif
 
 #include <list>
 #include <string>
@@ -34,8 +40,14 @@ public:
     const std::string& GetLastDetectedWakeWord() const { return last_detected_wake_word_; }
 
 private:
+#if CONFIG_USE_WAKENET_DIRECT_IF
+    esp_wn_iface_t * afe_iface_ = nullptr;
+    model_iface_data_t * afe_data_ = nullptr;
+    std::vector<int16_t> data_to_det_;
+#else
     esp_afe_sr_iface_t* afe_iface_ = nullptr;
     esp_afe_sr_data_t* afe_data_ = nullptr;
+#endif
     char* wakenet_model_ = NULL;
     std::vector<std::string> wake_words_;
     EventGroupHandle_t event_group_;
