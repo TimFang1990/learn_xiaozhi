@@ -131,6 +131,16 @@ void Application::Start() {
     // Initialize the protocol
     display->SetStatus(Lang::Strings::LOADING_PROTOCOL);
 
+#if CONFIG_USE_WAKE_WORD_DETECT
+    wake_word_detect_.Initialize(codec);
+    wake_word_detect_.OnWakeWordDetected([this](const std::string& wake_word) {
+        Schedule([this, &wake_word]() {
+            ESP_LOGI(TAG, "Wake word detected: %s", wake_word.c_str());
+        });
+    });
+    wake_word_detect_.StartDetection();
+#endif
+
     SetDeviceState(kDeviceStateActivating);
 
     MainEventLoop();
@@ -149,16 +159,19 @@ void Application::AudioLoop() {
 
 void Application::OnAudioInput() {
 #if CONFIG_USE_WAKE_WORD_DETECT
-    if (wake_word_detect_.IsDetectionRunning()) {
-        std::vector<int16_t> data;
+    std::vector<int16_t> data;
+    if (wake_word_detect_.IsDetectionRunning()) {  
         int samples = wake_word_detect_.GetFeedSize();
         if (samples > 0) {
             ReadAudio(data, 16000, samples);
             wake_word_detect_.Feed(data);
-            return;
         }
     }
-#endif
+    if(device_state_ == kDeviceStateListening){
+        demo_audio_raw_data_.insert(demo_audio_raw_data_.end(), data.begin(), data.end());
+    }
+    if(data.size()) return;
+#else
     //When at the state of kDeviceStateListening, start sampling the data
     if (device_state_ == kDeviceStateListening) {
         int samples = 30 * Board::GetInstance().GetAudioCodec()->input_sample_rate() / 1000; //sample duration 30ms
@@ -169,6 +182,7 @@ void Application::OnAudioInput() {
             return;
         }
     }
+#endif    
     vTaskDelay(pdMS_TO_TICKS(30)); //Avoid to run while loop w/ dummy function
 }
 
@@ -282,6 +296,12 @@ void Application::SetDeviceState(DeviceState state) {
             display->SetChatMessage("system", "");
             break;
         case kDeviceStateListening:
+        #if CONFIG_USE_WAKE_WORD_DETECT
+            if(!wake_word_detect_.IsDetectionRunning()){
+                ESP_LOGI(TAG, "Restart wake up word detection.");
+                wake_word_detect_.StartDetection();
+            }
+        #endif
             display->SetStatus(Lang::Strings::LISTENING);
             display->SetEmotion("loving");
             display->SetChatMessage("user", "Audio Demo: 聆听用户说话并同步播放...");

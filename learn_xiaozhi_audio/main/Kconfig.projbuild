@@ -50,11 +50,17 @@ config USE_AUDIO_PROCESSOR
     help
         需要 ESP32 S3 与 AFE 支持
 
-
 config USE_WECHAT_MESSAGE_STYLE
     depends on LCD_ST7789_240X280
     bool "WeChat Message Style"
     default n
     help
         Using the WeChat Message Style only when LCD_ST7789_240X280 is selected.
+
+config USE_WAKE_WORD_DETECT
+    bool "启用唤醒词检测"
+    default y
+    depends on IDF_TARGET_ESP32S3 && SPIRAM
+    help
+        需要 ESP32 S3 与 AFE 支持        
 endmenu

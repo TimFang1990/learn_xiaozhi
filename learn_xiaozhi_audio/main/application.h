@@ -13,6 +13,10 @@
 
 #include "background_task.h"
 
+#if CONFIG_USE_WAKE_WORD_DETECT
+#include "wake_word_detect.h"
+#endif
+
 enum DeviceState {
     kDeviceStateUnknown,
     kDeviceStateStarting,
@@ -56,6 +60,10 @@ public:
 private:
     Application();
     ~Application();
+
+#if CONFIG_USE_WAKE_WORD_DETECT
+    WakeWordDetect wake_word_detect_;
+#endif
 
     std::mutex mutex_;
     std::list<std::function<void()>> main_tasks_;

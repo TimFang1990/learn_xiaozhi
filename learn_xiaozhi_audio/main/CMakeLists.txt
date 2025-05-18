@@ -14,7 +14,8 @@ set(SOURCES "audio_codecs/audio_codec.cc"
 #Include Paths Set
 set(INCLUDE_DIRS "." 
                  "display"
-                 "audio_codecs")
+                 "audio_codecs"
+                 "audio_processing")
 
 # 添加板级公共文件
 file(GLOB BOARD_COMMON_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/boards/common/*.cc)
@@ -28,6 +29,10 @@ if(CONFIG_BOARD_TYPE_BREAD_COMPACT_WIFI)
 elseif(CONFIG_BOARD_TYPE_BREAD_COMPACT_WIFI_LCD)
     set(BOARD_TYPE "bread-compact-wifi-lcd")
     list(REMOVE_ITEM SOURCES "display/oled_display.cc")
+endif()
+
+if(CONFIG_USE_WAKE_WORD_DETECT)
+    list(APPEND SOURCES "audio_processing/wake_word_detect.cc")
 endif()
 
 file(GLOB BOARD_SOURCES
@@ -48,7 +53,7 @@ if(NOT BOARD_NAME)
 endif()
 target_compile_definitions(${COMPONENT_LIB}
                     PRIVATE BOARD_TYPE=\"${BOARD_TYPE}\" BOARD_NAME=\"${BOARD_NAME}\"
-                    )
+                    )                    
 
 # 设置语言固定为中文简体
 set(LANG_DIR "zh-CN")
