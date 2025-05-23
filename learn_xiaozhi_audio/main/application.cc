@@ -167,7 +167,11 @@ void Application::OnAudioInput() {
             wake_word_detect_.Feed(data);
         }
     }
-    if(device_state_ == kDeviceStateListening){
+    if(device_state_ == kDeviceStateListening
+    #if defined(CONFIG_IDF_TARGET_ESP32C6)
+    && demo_audio_raw_data_.size() < 24*1024
+    #endif
+    ){
         demo_audio_raw_data_.insert(demo_audio_raw_data_.end(), data.begin(), data.end());
     }
     if(data.size()) return;
