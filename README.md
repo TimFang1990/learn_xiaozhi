@@ -18,7 +18,7 @@ A series projects to learn all components of xiaozhi about how they work
     - Wake Up Word
       - Done to support ESP32S3 w/ afe
       - Done to support ESP32C6 w/ wn direct interface and w/o afe 
-        - Crash when talk long in single trigger, will fix it tomorrow
+        - Fix the crash issue by limiting audio duration to 1.5s to save the memory
     - Audio Codec
   - Net Server
   - Others
